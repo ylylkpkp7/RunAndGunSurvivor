@@ -55,6 +55,8 @@ public class Wall : MonoBehaviour
             currentDamage = StartCoroutine(DamageCol(tag));
             if(life <=0) //lifeが残っていなければ消滅
             {
+                ScoreManager.ScoreUp(point); //敵撃破でスコアアップ
+
                 CreateEffect();
             }
         }
@@ -71,9 +73,10 @@ public class Wall : MonoBehaviour
             life -= player.gameObject.GetComponent<NormalShooter>().GetShootPower();
         }
         else if(tag =="Sword")
-        {
+        { 
             life -=player.gameObject.GetComponent<NormalSword> ().GetSwordPower();
         }
+
         life--; //体力を減少
         yield return new WaitForSeconds(damageTime);
         //コルーチンを発動していたという情報の解除
