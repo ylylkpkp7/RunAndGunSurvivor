@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Wall : MonoBehaviour
@@ -19,6 +20,9 @@ public class Wall : MonoBehaviour
     float x; //振動による移動座標
 
     Coroutine currentDamage; //ダメージコルーチン
+
+    [Header("スコア点数")]
+    public int point = 100;
 
     void Start()
     {
@@ -43,10 +47,12 @@ public class Wall : MonoBehaviour
         if (currentDamage != null) return; //ダメージコルーチン中ならキャンセル
        
         //衝突相手が「Bullet」タグを持っていた場合
-        if (other.gameObject.tag == "Bullet")
+        if (other.gameObject.tag == "Bullet" || other.gameObject.tag =="Sword")
         {
+            //相手がどのタグか取得
+            string tag = other.gameObject.tag;
             //ダメージコルーチンを発動
-            currentDamage = StartCoroutine(DamageCol());
+            currentDamage = StartCoroutine(DamageCol(tag));
             if(life <=0) //lifeが残っていなければ消滅
             {
                 CreateEffect();
@@ -55,8 +61,19 @@ public class Wall : MonoBehaviour
     }
 
     //ダメージコルーチン
-    IEnumerator DamageCol()
+    IEnumerator DamageCol(string tag)
     {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+        //耐久力を減らす
+        if (tag == "Bullet")
+        {
+            life -= player.gameObject.GetComponent<NormalShooter>().GetShootPower();
+        }
+        else if(tag =="Sword")
+        {
+            life -=player.gameObject.GetComponent<NormalSword> ().GetSwordPower();
+        }
         life--; //体力を減少
         yield return new WaitForSeconds(damageTime);
         //コルーチンを発動していたという情報の解除

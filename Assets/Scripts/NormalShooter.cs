@@ -1,4 +1,4 @@
-using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,11 +15,35 @@ public class NormalShooter : MonoBehaviour
     public float shootSpeed = 10.0f; //弾速
 
     GameObject bullets; //生成した弾をまとめるオブジェクト
+
+    const int maxShootPower = 3;　//最大威力
+    int shootPower = 1;　//現在威力
+
+    [Header("ソードのスクリプト")]
+    public NormalSword normalSword;　//ソード中の動きを封じるため
     
     //InputAction(Playerマップ)のAttackアクションがおされたら
     void OnAttack(InputValue value)
     {
-        Shoot();
+        //ソード中だったら何もしない
+        if (normalSword.GetIsSword())
+            return;
+        //ゲームの状態がゲームオーバー、あるいはリトライだったら
+        if(GameManager.gameState == GameState.retry)
+        {
+            //staticメソッドなので簡単に呼び出し
+            GameManager.RetryScene();
+        }
+        else if (GameManager.gameState == GameState.result) //リザルト状態の時ならネクスト
+        {
+            //行先が自由に記述できるようにpublic変数を使っているので、NextSceneはStaticメソッドに行かず、地道に呼び出し
+            GameManager gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>();gm.NextScene(gm.nextScene);    
+        }
+        else　//ゲームステータスがプレイ中なら
+        {
+            Shoot();
+        }
+        
     }
 
     void Shoot()
@@ -55,5 +79,27 @@ public class NormalShooter : MonoBehaviour
     {
         //指定したタグを持っているオブジェクトを取得
         bullets = GameObject.FindGameObjectWithTag("Bullets");
-    }    
+    }  
+    
+    public void ShootPowerUp()
+    {
+        shootPower++;//威力をあげる
+        if (shootPower > maxShootPower) shootPower = maxShootPower;//最大威力までにおさえる
+        GameObject canvas = GameObject.FindGameObjectWithTag("UI");　//UIタグの検索
+        canvas.GetComponent<UIController>().UpdateGun();//UI更新
+    }
+
+    //威力が下がる
+    public void ShootPowerDown()
+    {
+        shootPower--;//威力を下げる
+        if (shootPower <= 0 ) shootPower = 1;//最小でも１
+        GameObject canvas = GameObject.FindGameObjectWithTag("UI");　//UIタグの検索
+        canvas.GetComponent<UIController>().UpdateGun();//UI更新
+    }
+    //現在の威力の取得
+    public int GetShootPower()
+    {
+        return shootPower;
+    }
 }
