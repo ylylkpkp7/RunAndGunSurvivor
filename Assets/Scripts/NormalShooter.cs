@@ -21,7 +21,13 @@ public class NormalShooter : MonoBehaviour
 
     [Header("ソードのスクリプト")]
     public NormalSword normalSword;　//ソード中の動きを封じるため
-    
+
+   
+
+    AudioSource[] playerAudio;
+    [Header("SE音源")]
+    public AudioClip se_Shot;
+
     //InputAction(Playerマップ)のAttackアクションがおされたら
     void OnAttack(InputValue value)
     {
@@ -37,7 +43,7 @@ public class NormalShooter : MonoBehaviour
         else if (GameManager.gameState == GameState.result) //リザルト状態の時ならネクスト
         {
             //行先が自由に記述できるようにpublic変数を使っているので、NextSceneはStaticメソッドに行かず、地道に呼び出し
-            GameManager gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>();gm.NextScene(gm.nextScene);    
+            GameManager gm = GameObject.FindGameObjectWithTag("GM").GetComponent<GameManager>();gm.NextScene(gm.nextScene);
         }
         else　//ゲームステータスがプレイ中なら
         {
@@ -51,6 +57,7 @@ public class NormalShooter : MonoBehaviour
         //残数があれば
        if(bulletManager.GetBulletRemaining() > 0)
         {
+            playerAudio[0].PlayOneShot(se_Shot);
             //プレハブの生成と生成情報の取得
             GameObject obj = Instantiate(
                 bulletPrefabs, //何を
@@ -79,6 +86,8 @@ public class NormalShooter : MonoBehaviour
     {
         //指定したタグを持っているオブジェクトを取得
         bullets = GameObject.FindGameObjectWithTag("Bullets");
+
+        playerAudio = GetComponents<AudioSource>();
     }  
     
     public void ShootPowerUp()

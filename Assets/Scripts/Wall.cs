@@ -24,10 +24,15 @@ public class Wall : MonoBehaviour
     [Header("スコア点数")]
     public int point = 100;
 
+    AudioSource enemyAudio;
+    [Header("SE音源")]
+    public AudioClip se_Damage;
+
     void Start()
     {
         //振動対象となるオブジェクトのローカル初期値を取得
         startPosition = damageBody.transform.localPosition;
+        enemyAudio = GetComponent<AudioSource>();
     }
 
     void Update()
@@ -49,6 +54,7 @@ public class Wall : MonoBehaviour
         //衝突相手が「Bullet」タグを持っていた場合
         if (other.gameObject.tag == "Bullet" || other.gameObject.tag =="Sword")
         {
+            enemyAudio.PlayOneShot(se_Damage);
             //相手がどのタグか取得
             string tag = other.gameObject.tag;
             //ダメージコルーチンを発動
