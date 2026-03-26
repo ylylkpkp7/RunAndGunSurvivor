@@ -754,7 +754,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8207075264191696257, guid: b349e6d3d43b26a4f97d88daafd22a57, type: 3}
       propertyPath: goalPosition
-      value: 100
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 8207075264191696257, guid: b349e6d3d43b26a4f97d88daafd22a57, type: 3}
       propertyPath: bulletManager
